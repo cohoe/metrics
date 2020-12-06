@@ -65,7 +65,7 @@
   "gnetId": 7587,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1607234247386,
+  "iteration": 1607234247389,
   "links": [],
   "panels": [
     {
@@ -435,12 +435,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(.5, probe_duration_seconds{instance=~\"$target\"}[$interval])",
+          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\"}[$interval])",
           "format": "time_series",
+          "hide": false,
           "interval": "$interval",
           "intervalFactor": 1,
           "legendFormat": "{{ instance }}",
           "refId": "A"
+        },
+        {
+          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__http_2xx\"}[$interval])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -544,11 +552,18 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "count(quantile_over_time(.5, probe_duration_seconds{instance=~\"$target\"}[$interval]) >=1 )",
+          "expr": "count(quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\"}[$interval]) >=1 )",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
           "refId": "A"
+        },
+        {
+          "expr": "count(quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__http_2xx\"}[$interval]) >=1 )",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
         }
       ],
       "thresholds": [],

@@ -55,6 +55,7 @@ scrape_configs:
           - 8.8.8.8
           - 9.9.9.9
           - 100.64.0.9
+          - 104.129.89.141
     relabel_configs:
       - source_labels: [ __address__ ]
         target_label: __param_target
