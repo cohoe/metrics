@@ -1,6 +1,7 @@
 ---
 version: '2'
 services:
+
   prometheus:
     #image: docker.io/bitnami/prometheus:latest
     build: ./prometheus
@@ -14,6 +15,7 @@ services:
       - '--web.enable-admin-api'
       - '--storage.tsdb.retention.time=40d'
       - '--config.file=/opt/bitnami/prometheus/conf/prometheus.yml'
+
   grafana:
     #image: docker.io/grafana/grafana:latest # They do good things with latest
     build: ./grafana
@@ -25,10 +27,9 @@ services:
       - backend
     depends_on:
       - prometheus
-    labels:
-      - "traefik.http.routers.grafana.rule=Host(`grafana.grantcohoe.com`)"
     environment:
       GF_INSTALL_PLUGINS: 'grafana-piechart-panel'
+
   blackbox:
     # https://github.com/prometheus/blackbox_exporter/blob/master/README.md
     # https://www.robustperception.io/icmp-pings-with-the-blackbox-exporter
@@ -43,19 +44,7 @@ services:
       # Balena wigs out if you put the CAP_ prefix. At least Docker on laptop
       # doesn't. Wonder what else will?
       - NET_RAW
-  unifipoller:
-    # https://github.com/unifi-poller/unifi-poller/wiki/Docker
-    image: docker.io/golift/unifi-poller:latest
-    environment:
-      UP_UNIFI_DEFAULT_URL: ${UP_UNIFI_DEFAULT_URL}
-      UP_UNIFI_DEFAULT_USER: ${UP_UNIFI_DEFAULT_USER}
-      UP_UNIFI_DEFAULT_PASS: ${UP_UNIFI_DEFAULT_PASS}
-      UP_INFLUXDB_DISABLE: 'true'
-      UP_POLLER_DEBUG: 'true'
-    ports:
-      - 9130:9130
-    networks:
-      - backend
+
 volumes:
   grafana-data:
     external: true

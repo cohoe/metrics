@@ -20,7 +20,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.3.1"
+      "version": "7.3.4"
     },
     {
       "type": "panel",
@@ -65,7 +65,7 @@
   "gnetId": 7587,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1604191220565,
+  "iteration": 1607234247386,
   "links": [],
   "panels": [
     {
@@ -141,7 +141,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "(sum(quantile_over_time(.5, probe_success{job=\"internet_connectivity__http_2xx\"}[1m])) + sum(quantile_over_time(.5, probe_success{job=\"internet_connectivity__icmp\"}[1m]))) / (count(probe_success{job=\"internet_connectivity__icmp\"}) + count(probe_success{job=\"internet_connectivity__http_2xx\"}))",
@@ -207,7 +207,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "(sum(probe_success{job=\"internet_connectivity__icmp\"}) + sum(probe_success{job=\"internet_connectivity__http_2xx\"})) / (count(probe_success{job=\"internet_connectivity__icmp\"}) + count(probe_success{job=\"internet_connectivity__http_2xx\"}))",
@@ -271,7 +271,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "avg(probe_duration_seconds{job=\"internet_connectivity__icmp\"})",
@@ -347,7 +347,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "avg(probe_dns_lookup_time_seconds{job=\"internet_connectivity__http_2xx\"})",
@@ -425,7 +425,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -487,7 +487,8 @@
     },
     {
       "aliasColors": {
-        "Count": "red"
+        "Count": "red",
+        "Value": "red"
       },
       "bars": true,
       "dashLength": 10,
@@ -533,7 +534,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -632,7 +633,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -729,7 +730,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.1",
+      "pluginVersion": "7.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1878,5 +1879,5 @@
   "timezone": "",
   "title": "Internet Connectivity",
   "uid": "xtkCtBkiz",
-  "version": 9
+  "version": 10
 }

@@ -54,6 +54,7 @@ scrape_configs:
           - 1.1.1.1
           - 8.8.8.8
           - 9.9.9.9
+          - 100.64.0.9
     relabel_configs:
       - source_labels: [ __address__ ]
         target_label: __param_target
@@ -62,7 +63,19 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox:9115
 
-  - job_name: 'unifipoller'
-    scrape_interval: 30s
+  - job_name: vpn_icmp
+    metrics_path: /probe
+    params:
+      module: [ icmp ]
     static_configs:
-      - targets: [ 'unifipoller:9130' ]
+      - targets:
+          - 192.168.0.1
+          - 192.168.1.1
+          - 192.168.8.1
+    relabel_configs:
+      - source_labels: [ __address__ ]
+        target_label: __param_target
+      - source_labels: [ __param_target ]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
