@@ -2,71 +2,65 @@
 version: '2'
 services:
   prometheus:
-    image: docker.io/bitnami/prometheus:latest
-    #ports:
-    #  - 9090:9090
+    #image: docker.io/bitnami/prometheus:latest
+    build: ./prometheus
+    ports:
+      - 9090:9090
     networks:
-      - container-dmz
       - backend
     volumes:
-      - /opt/prometheus:/opt/bitnami/prometheus/data
-      - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+      - prometheus-data:/opt/bitnami/prometheus/data
     command:
       - '--web.enable-admin-api'
       - '--storage.tsdb.retention.time=40d'
       - '--config.file=/opt/bitnami/prometheus/conf/prometheus.yml'
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.prometheus.rule=Host(`prometheus.vps.grantcohoe.com`)"
-#      - "traefik.http.routers.prometheus.entryPoints=internal-https"
-    restart: always
-
   grafana:
-    image: docker.io/grafana/grafana:latest # They do good things with latest
-    #ports:
-    #  - 3000:3000
+    #image: docker.io/grafana/grafana:latest # They do good things with latest
+    build: ./grafana
+    ports:
+      - 3000:3000
     volumes:
-      - /opt/grafana:/var/lib/grafana
-      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./grafana/dashboards:/etc/dashboards
+      - grafana-data:/var/lib/grafana
     networks:
-      - container-dmz
       - backend
     depends_on:
       - prometheus
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.grafana.rule=Host(`grafana.vps.grantcohoe.com`)"
-#      - "traefik.http.routers.grafana.entryPoints=internal-https"
+    labels:
+      - "traefik.http.routers.grafana.rule=Host(`grafana.grantcohoe.com`)"
     environment:
       GF_INSTALL_PLUGINS: 'grafana-piechart-panel'
-    restart: always
-
-  blackbox-internet:
+  blackbox:
     # https://github.com/prometheus/blackbox_exporter/blob/master/README.md
     # https://www.robustperception.io/icmp-pings-with-the-blackbox-exporter
-    image: docker.io/prom/blackbox-exporter:latest # They do good things with latest
-    #ports:
-    #  - 9115:9115
+    #image: docker.io/prom/blackbox-exporter:latest # They do good things with latest
+    build: ./blackbox
+    ports:
+      - 9115:9115
     networks:
-      - container-dmz
       - backend
     command: '--config.file=/config/blackbox.yml'
     cap_add:
       # Balena wigs out if you put the CAP_ prefix. At least Docker on laptop
       # doesn't. Wonder what else will?
       - NET_RAW
-    volumes:
-      - ./blackbox/blackbox.yml:/config/blackbox.yml
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.blackbox-internet.rule=Host(`blackbox-internet.vps.grantcohoe.com`)"
-#      - "traefik.http.routers.blackbox-internet.entryPoints=internal-https"
-    restart: always
-
+  unifipoller:
+    # https://github.com/unifi-poller/unifi-poller/wiki/Docker
+    image: docker.io/golift/unifi-poller:latest
+    environment:
+      UP_UNIFI_DEFAULT_URL: ${UP_UNIFI_DEFAULT_URL}
+      UP_UNIFI_DEFAULT_USER: ${UP_UNIFI_DEFAULT_USER}
+      UP_UNIFI_DEFAULT_PASS: ${UP_UNIFI_DEFAULT_PASS}
+      UP_INFLUXDB_DISABLE: 'true'
+      UP_POLLER_DEBUG: 'true'
+    ports:
+      - 9130:9130
+    networks:
+      - backend
+volumes:
+  grafana-data:
+    external: true
+  prometheus-data:
+    external: true
 networks:
   backend:
     external: false
-  container-dmz:
-    external: true
