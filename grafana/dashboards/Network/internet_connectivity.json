@@ -65,11 +65,12 @@
   "gnetId": 7587,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1607234247389,
+  "iteration": 1607278917380,
   "links": [],
   "panels": [
     {
       "datasource": "Prometheus",
+      "description": "Percentage of probe successes over the last minute.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -144,7 +145,7 @@
       "pluginVersion": "7.3.4",
       "targets": [
         {
-          "expr": "(sum(quantile_over_time(.5, probe_success{job=\"internet_connectivity__http_2xx\"}[1m])) + sum(quantile_over_time(.5, probe_success{job=\"internet_connectivity__icmp\"}[1m]))) / (count(probe_success{job=\"internet_connectivity__icmp\"}) + count(probe_success{job=\"internet_connectivity__http_2xx\"}))",
+          "expr": "sum(quantile_over_time(.5, probe_success{job=~\"^internet_connectivity.*\"}[1m])) / count(probe_success{job=~\"^internet_connectivity.*\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -210,7 +211,7 @@
       "pluginVersion": "7.3.4",
       "targets": [
         {
-          "expr": "(sum(probe_success{job=\"internet_connectivity__icmp\"}) + sum(probe_success{job=\"internet_connectivity__http_2xx\"})) / (count(probe_success{job=\"internet_connectivity__icmp\"}) + count(probe_success{job=\"internet_connectivity__http_2xx\"}))",
+          "expr": "(sum(probe_success{job=~\"^internet_connectivity.*\", instance=~\"$target\"})) / count(probe_success{job=~\"^internet_connectivity.*\", instance=~\"$target\"}) ",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -219,7 +220,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Global Probe Success Rate",
+      "title": "Probe Success Rate",
       "transformations": [],
       "type": "stat"
     },
@@ -274,7 +275,7 @@
       "pluginVersion": "7.3.4",
       "targets": [
         {
-          "expr": "avg(probe_duration_seconds{job=\"internet_connectivity__icmp\"})",
+          "expr": "avg(probe_duration_seconds{job=\"internet_connectivity__icmp\", instance=~\"$target\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -282,7 +283,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Global Average Ping Time",
+      "title": "Latest Average Ping Time",
       "transformations": [
         {
           "id": "reduce",
@@ -350,7 +351,7 @@
       "pluginVersion": "7.3.4",
       "targets": [
         {
-          "expr": "avg(probe_dns_lookup_time_seconds{job=\"internet_connectivity__http_2xx\"})",
+          "expr": "avg(probe_dns_lookup_time_seconds{job=\"internet_connectivity__http_2xx\", instance=~\"$target\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -358,7 +359,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Global Average DNS Resolution Time",
+      "title": "Latest Average DNS Resolution Time",
       "transformations": [
         {
           "id": "reduce",
@@ -391,6 +392,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -435,27 +437,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\"}[$interval])",
+          "expr": "quantile_over_time(.5, probe_duration_seconds{job=~\"^internet_connectivity.*\", instance=~\"$target\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "$interval",
           "intervalFactor": 1,
           "legendFormat": "{{ instance }}",
           "refId": "A"
-        },
-        {
-          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__http_2xx\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{ instance }}",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Global Median Probe Duration",
+      "title": "Median Probe Duration",
       "tooltip": {
         "shared": true,
         "sort": 1,
@@ -552,25 +547,18 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "count(quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\"}[$interval]) >=1 )",
+          "expr": "count(quantile_over_time(.5, probe_duration_seconds{job=~\"^internet_connectivity.*\"}[$interval]) >=1 )",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
           "refId": "A"
-        },
-        {
-          "expr": "count(quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__http_2xx\"}[$interval]) >=1 )",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Global Slow Probe Count",
+      "title": "Slow Probe Count",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -658,7 +646,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\"}[$interval])",
+          "expr": "quantile_over_time(.5, probe_duration_seconds{job=\"internet_connectivity__icmp\", instance=~\"$target\"}[$interval])",
           "interval": "$interval",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -668,7 +656,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Global Median Ping Time",
+      "title": "Median Ping Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -755,7 +743,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(.5, probe_dns_lookup_time_seconds{job=\"internet_connectivity__http_2xx\"}[$interval])",
+          "expr": "quantile_over_time(.5, probe_dns_lookup_time_seconds{job=\"internet_connectivity__http_2xx\", instance=~\"$target\"}[$interval])",
           "interval": "$interval",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -765,7 +753,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Global Median DNS Resolution Time",
+      "title": "Median DNS Resolution Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1894,5 +1882,5 @@
   "timezone": "",
   "title": "Internet Connectivity",
   "uid": "xtkCtBkiz",
-  "version": 10
+  "version": 11
 }
